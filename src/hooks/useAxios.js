@@ -1,13 +1,14 @@
 import axios from 'axios';
+import React,{useEffect,useState} from 'react';
 
-const urlApi = import.meta.env.VITE_URL_API;
+const urlApi = import.meta.env.VITE_URL_API; 
 
 const reqAxios = axios.create({
-    baseURL: urlApi,
-    timeout: 12000,
-    headers: {
-        "Content-Type": 'application/json',
-    }
+        baseURL: urlApi,
+        timeout: 12000,
+        headers: {
+            "Content-Type": 'application/json',
+        }
 });
 
 export const useAxios = (url) => {
