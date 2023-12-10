@@ -1,7 +1,9 @@
 import React from 'react'
 
-export const Card = ({data}) => {
+export const Card = ({data, editFavorites, isFavorite}) => {
+
  const noImage = 'https://t4.ftcdn.net/jpg/04/73/25/49/360_F_473254957_bxG9yf4ly7OBO5I0O5KABlN930GwaMQz.jpg';
+
   return (
     <div className="card shadow-sm">
         <img src={data.images.fixed_width.url ? data.images.fixed_width.url : noImage} alt="Girl in a jacket" width={'100%'} height={'230'}/>
@@ -14,7 +16,7 @@ export const Card = ({data}) => {
                             </svg>
                             <div>0</div>
                         </button>
-                        <button type="button" className="btn btn-sm btn-secondary">
+                        <button type="button" className={isFavorite(data.id) ? "btn btn-sm btn-danger" : "btn btn-sm btn-secondary"} onClick={() => editFavorites({id: data.id, image: data.images.fixed_width.url})}>
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-heart-fill" viewBox="0 0 16 16">
                                 <path  d="M8 1.314C12.438-3.248 23.534 4.735 8 15-7.534 4.736 3.562-3.248 8 1.314z"/>
                             </svg>

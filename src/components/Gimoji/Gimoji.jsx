@@ -10,12 +10,14 @@ export const Gimoji = () => {
     
 
     const [textSearch, setTextSearch] = useState('animals');
+    const [favorites, setFavorites] = useState([]);
+
     const [limit, setLimit] = useState(16);
 
     const urlSearch = `search?api_key=${apiKey}&q=${textSearch}&limit=${limit}&offset=0`;
     const urlCategories = `categories?api_key=${apiKey}`;
     
-    const { dataApi: dataGifs } = useAxios(urlSearch);
+    const { dataApi: dataGifs} = useAxios(urlSearch);
     const { dataApi: dataCategories } = useAxios(urlCategories);
 
     const onClickSelect = (e) => {
@@ -29,8 +31,22 @@ export const Gimoji = () => {
     }
     
     const updateLimit = () => {
-        setLimit(limit+16);
+        setLimit((prevLimit) => prevLimit + 16)
     }
+
+    const editFavorites = (gif) => {
+        if(isFavorite(gif.id)){
+            const newFavorites = favorites.filter(item => item.id !== gif.id)
+            setFavorites(newFavorites);
+        }
+        else setFavorites([...favorites,gif]);
+        console.log(favorites)
+    }
+    
+    const isFavorite = (id) => {
+        return favorites.some((item) => item.id === id);
+    }
+
 
     return (
     <>
@@ -47,7 +63,7 @@ export const Gimoji = () => {
                 <div className="row row-cols-1 row-cols-sm-2 row-cols-md-4 g-3">
                     {dataGifs.map((dataGif,index) => (
                       <div className="col" key={index}>
-                        <Card data={dataGif}/>
+                        <Card data={dataGif} editFavorites = {editFavorites} isFavorite={isFavorite}/>
                       </div>  
                     ))}
                 </div>
