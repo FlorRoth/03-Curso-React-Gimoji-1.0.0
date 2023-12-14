@@ -11,22 +11,35 @@ const reqAxios = axios.create({
         }
 });
 
-export const useAxios = (url) => {
+export const useAxios = (url,method,params) => {
 
     const [dataApi, setDataApi] = useState([]);
-    
+    const [isLoading, setIsLoading] = useState(true);
+   
     useEffect(() => {
         getFetch();
     }, [url])
     
     
     const getFetch = async() => {
-        const resp = await reqAxios.get(url);
+        const resp = await reqAxios({
+            url: url,
+            method: method,
+            params: {params}
+        });
+
         const { data } = await resp.data;
         setDataApi(data)
+        setIsLoading(false);
     }
     
     return {
-        dataApi
+        dataApi,
+        isLoading
     }
+}
+
+useAxios.defaultProps ={
+    method: 'get',
+    params: null
 }
