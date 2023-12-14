@@ -2,7 +2,8 @@ import { Card } from "./Card";
 import { Search } from "../ui/Search";
 import { Select } from "../ui/Select";
 import { useAxios } from "../../hooks/useAxios";
-import React, { useState } from 'react'
+import React, { useState,useEffect } from 'react'
+import { usePaginate } from "../../hooks/usePaginate";
 
 const apiKey = import.meta.env.VITE_APIKEY_GIPHY;
 
@@ -10,15 +11,18 @@ export const Gimoji = () => {
     
 
     const [textSearch, setTextSearch] = useState('animals');
-    const [favorites, setFavorites] = useState([]);
 
     const [limit, setLimit] = useState(16);
+    const [page, setPage] = useState(1);
+    const {offset, onNext, onPrev} = usePaginate(0,limit,1,setPage);
 
-    const urlSearch = `search?api_key=${apiKey}&q=${textSearch}&limit=${limit}&offset=0`;
+    const urlSearch = `search?api_key=${apiKey}&q=${textSearch}&limit=${limit}&offset=${offset}`;
     const urlCategories = `categories?api_key=${apiKey}`;
     
     const { dataApi: dataGifs} = useAxios(urlSearch);
     const { dataApi: dataCategories } = useAxios(urlCategories);
+
+
 
     const onClickSelect = (e) => {
         setTextSearch(e.target.value);
@@ -30,22 +34,7 @@ export const Gimoji = () => {
         setLimit(16);
     }
     
-    const updateLimit = () => {
-        setLimit((prevLimit) => prevLimit + 16)
-    }
 
-    const editFavorites = (gif) => {
-        if(isFavorite(gif.id)){
-            const newFavorites = favorites.filter(item => item.id !== gif.id)
-            setFavorites(newFavorites);
-        }
-        else setFavorites([...favorites,gif]);
-        console.log(favorites)
-    }
-    
-    const isFavorite = (id) => {
-        return favorites.some((item) => item.id === id);
-    }
 
 
     return (
@@ -63,16 +52,27 @@ export const Gimoji = () => {
                 <div className="row row-cols-1 row-cols-sm-2 row-cols-md-4 g-3">
                     {dataGifs.map((dataGif,index) => (
                       <div className="col" key={index}>
-                        <Card data={dataGif} editFavorites = {editFavorites} isFavorite={isFavorite}/>
+                        <Card key={dataGif.id} data={dataGif}/>
                       </div>  
                     ))}
                 </div>
 
-                <div className="row mt-5" style={{ justifyContent: 'center', alignItems: 'center'}}>
-                       <button type="button" className="btn btn-primary" onClick={updateLimit}>
-                           Cargar más 
-                        </button> 
-                </div>
+                <nav>
+                    <ul className="pagination pagination-lg justify-content-center mt-5">
+                        <li className="page-item" onClick={onPrev}>
+                        <a className="btn page-link bg-primary text-light"  aria-label="Previous">
+                            <span aria-hidden="true">&laquo;</span>
+                        </a>
+                        </li>
+                        <li className="page-item bg-primary text-light"><a className="page-link" >{page}</a></li>
+                        <li className="page-item" onClick={onNext}>
+                        <a className=" btn page-link bg-primary text-light"  aria-label="Next">
+                            <span aria-hidden="true">&raquo;</span>
+                        </a>
+                        </li>
+                    </ul>
+                </nav>
+
             </div>
         </div>        
     </>
